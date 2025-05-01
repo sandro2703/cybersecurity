@@ -1,0 +1,181 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segurança Cibernética</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0a0a23;
+            color: #ffffff;
+        }
+
+        header {
+            background-color: #1b1b32;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        header img {
+            max-width: 100px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            text-shadow: 0 0 10px #00ff88;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+            }
+            50% {
+                text-shadow: 0 0 20px #00ff88, 0 0 30px #00ff88;
+            }
+        }
+
+        nav {
+            background-color: #1b1b32;
+            padding: 10px;
+            text-align: center;
+        }
+
+        nav a {
+            color: #00ff88;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2em;
+        }
+
+        nav a:hover {
+            color: #ffffff;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .hero h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .hero button {
+            padding: 10px 20px;
+            background-color: #00ff88;
+            border: none;
+            color: #0a0a23;
+            font-size: 1.1em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin: 10px;
+        }
+
+        .hero button:hover {
+            background-color: #ffffff;
+        }
+
+        .hero .whatsapp-btn {
+            background-color: #25D366;
+            color: #ffffff;
+        }
+
+        .hero .whatsapp-btn:hover {
+            background-color: #20b358;
+        }
+
+        footer {
+            background-color: #1b1b32;
+            text-align: center;
+            padding: 20px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            border-top: 2px solid #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="cadeado.png" alt="Cadeado representando segurança cibernética">
+        <h1>Segurança Cibernética</h1>
+    </header>
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#contato">Contato</a>
+    </nav>
+    <section class="hero">
+        <h2>Proteja seus Dados com a gente!</h2>
+        <p>Oferecemos as melhores soluções para manter suas informações seguras na era digital.</p>
+        <button onclick="alert('Bem-vindo! Entre em contato para saber mais.')">Saiba Mais</button>
+        <a href="https://api.whatsapp.com/send?phone=+5515996428117" target="_blank">
+            <button class="whatsapp-btn">Fale comigo no WhatsApp</button>
+        </a>
+    </section>
+    <footer>
+        <p>© 2025 Segurança Cibernética. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
